@@ -6,6 +6,7 @@ import com.project.ecommerceuser.user.exception.UserNotFoundException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -18,4 +19,6 @@ public interface UserService {
 
     @Transactional
     User addAddress(Address address,String email);
+
+    List<User> findAll();
 }

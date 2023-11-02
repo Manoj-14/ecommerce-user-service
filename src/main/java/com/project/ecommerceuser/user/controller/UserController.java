@@ -9,6 +9,8 @@ import com.project.ecommerceuser.user.service.UserServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,10 +27,19 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @GetMapping
+    public ResponseEntity<?> getAllUsers(){
+        List<User> users = userService.findAll();
+        return new ResponseEntity<>(users,HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable String id){
+    public ResponseEntity<EntityModel> getUser(@PathVariable String id){
         User user = userService.findUser(id);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        EntityModel entityModel = EntityModel.of(user);
+        WebMvcLinkBuilder link = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllUsers());
+        entityModel.add(link.withRel("all-users"));
+        return new ResponseEntity<>(entityModel, HttpStatus.OK);
     }
 
     @PostMapping
