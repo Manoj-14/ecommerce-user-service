@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     public User findUser(String id) throws UserNotFoundException {
         User user = userRepository.findById(id).stream().findFirst().orElse(null);
         if(user == null){
-            throw new UserNotFoundException();
+            throw new UserNotFoundException("User not found");
         }
         else return user;
     }
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findUserByEmail(String email) throws UserNotFoundException{
         User user = userRepository.findByEmail(email);
-        if(user == null) throw new UserNotFoundException();
+        if(user == null) throw new UserNotFoundException("User not found");
         else return user;
     }
 
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
             user.getAddresses().add(savedAddress);
             return userRepository.save(user);
         }else {
-            throw new UserNotFoundException();
+            throw new UserNotFoundException("User not found Exception");
         }
     }
 
