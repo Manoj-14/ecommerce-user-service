@@ -13,7 +13,7 @@ public class Address {
     private String city;
     private String state;
     private String country;
-    @Size(min = 6,max = 6)
+    @Size(min = 6,max = 6,message = "Pincode size should equal to 6")
     private String pincode;
 
     public Address() {

@@ -19,7 +19,7 @@ public class User {
     @NotNull
     private String password;
     @NotNull
-    @Email
+    @Email(message = "Please enter the correct email")
     private String email;
     @DocumentReference(lazy = true)
     private List<Address> addresses;
