@@ -27,19 +27,25 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public ResponseEntity<?> getAllUsers(){
-        List<User> users = userService.findAll();
-        return new ResponseEntity<>(users,HttpStatus.OK);
-    }
+//    @GetMapping
+//    public ResponseEntity<?> getAllUsers(){
+//        List<User> users = userService.findAll();
+//        return new ResponseEntity<>(users,HttpStatus.OK);
+//    }
+
+//    @GetMapping("/{id}")
+//    public ResponseEntity<EntityModel> getUser(@PathVariable String id){
+//        User user = userService.findUser(id);
+//        EntityModel entityModel = EntityModel.of(user);
+//        WebMvcLinkBuilder link = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllUsers());
+//        entityModel.add(link.withRel("all-users"));
+//        return new ResponseEntity<>(entityModel, HttpStatus.OK);
+//    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel> getUser(@PathVariable String id){
+    public ResponseEntity<User> getUser(@PathVariable String id){
         User user = userService.findUser(id);
-        EntityModel entityModel = EntityModel.of(user);
-        WebMvcLinkBuilder link = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllUsers());
-        entityModel.add(link.withRel("all-users"));
-        return new ResponseEntity<>(entityModel, HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping

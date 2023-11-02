@@ -1,5 +1,6 @@
 package com.project.ecommerceuser.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Size;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -7,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "Address")
 public class Address {
 
+    @JsonIgnore
     @Id
     private String id;
     private String street;

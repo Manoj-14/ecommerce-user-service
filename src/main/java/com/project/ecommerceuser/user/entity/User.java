@@ -1,5 +1,7 @@
 package com.project.ecommerceuser.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
@@ -8,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.List;
 
+@JsonIgnoreProperties({"password", "id"})
 @Document(collection = "User")
 public class User {
 
@@ -16,6 +19,8 @@ public class User {
 
     @NotNull
     private String name;
+
+//    @JsonIgnore   // or you can use class level jsonIgnoreProperties annotations
     @NotNull
     private String password;
     @NotNull
