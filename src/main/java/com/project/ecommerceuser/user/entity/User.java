@@ -1,5 +1,6 @@
 package com.project.ecommerceuser.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.Email;
@@ -10,20 +11,21 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.List;
 
-@JsonIgnoreProperties({"password", "id"})
+@JsonFilter("userFilterBean")
+@JsonIgnoreProperties({"id"})
 @Document(collection = "User")
 public class User {
 
     @Id
     private String id;
 
-    @NotNull
+    @NotNull(message = "Name must not be null")
     private String name;
 
 //    @JsonIgnore   // or you can use class level jsonIgnoreProperties annotations
-    @NotNull
+    @NotNull(message = "Password must not be null")
     private String password;
-    @NotNull
+    @NotNull(message = "email must not be null")
     @Email(message = "Please enter the correct email")
     private String email;
     @DocumentReference(lazy = true)

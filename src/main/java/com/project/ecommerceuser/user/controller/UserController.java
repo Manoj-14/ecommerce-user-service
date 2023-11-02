@@ -1,5 +1,9 @@
 package com.project.ecommerceuser.user.controller;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.PropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.project.ecommerceuser.user.entity.Address;
 import com.project.ecommerceuser.user.entity.User;
 import com.project.ecommerceuser.user.exception.UserNotFoundException;
@@ -13,6 +17,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -27,11 +32,11 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-//    @GetMapping
-//    public ResponseEntity<?> getAllUsers(){
-//        List<User> users = userService.findAll();
-//        return new ResponseEntity<>(users,HttpStatus.OK);
-//    }
+    @GetMapping
+    public ResponseEntity<?> getAllUsers(){
+        List<User> users = userService.findAll();
+        return new ResponseEntity<>(users,HttpStatus.OK);
+    }
 
 //    @GetMapping("/{id}")
 //    public ResponseEntity<EntityModel> getUser(@PathVariable String id){
@@ -43,9 +48,13 @@ public class UserController {
 //    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable String id){
+    public ResponseEntity<MappingJacksonValue> getUser(@PathVariable String id){
         User user = userService.findUser(id);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        MappingJacksonValue userValue = new MappingJacksonValue(user);
+        SimpleBeanPropertyFilter userFilter  = SimpleBeanPropertyFilter.filterOutAllExcept("name","email","addresses");
+        FilterProvider userFilterProvider = new SimpleFilterProvider().addFilter("userFilterBean",userFilter);
+        userValue.setFilters(userFilterProvider);
+        return new ResponseEntity<>(userValue, HttpStatus.OK);
     }
 
     @PostMapping
