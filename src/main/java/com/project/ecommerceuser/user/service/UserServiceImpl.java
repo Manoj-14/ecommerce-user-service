@@ -7,9 +7,16 @@ import com.project.ecommerceuser.user.repository.AddressRepository;
 import com.project.ecommerceuser.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -70,6 +77,41 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findAll(){
         return userRepository.findAll();
+    }
+
+    private boolean exitsByProductId(String id) throws Exception {
+        HashMap<String,String> uriVariables = new HashMap<>();
+        uriVariables.put("id",id);
+        try{
+            ResponseEntity<Map> responseEntity = new RestTemplate().getForEntity("http://localhost:8082/api/products/{id}/exists", Map.class,uriVariables);
+        }catch (RuntimeException re){
+            throw new Exception("Product not found");
+        }
+        return true;
+    }
+
+    @Override
+    public void addToCart(String productId, String userId, double price) throws Exception {
+        exitsByProductId(productId);
+        if(!userRepository.existsById(userId)){
+            throw new UserNotFoundException("User not found");
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HashMap<String ,String> uriVariables = new HashMap<>();
+        uriVariables.put("user_id",userId);
+
+        Map<String,String> request = new HashMap<>();
+        request.put("product_id",productId);
+        request.put("price",price+"");
+
+        HttpEntity<Map> requestBody = new HttpEntity<>(request,headers);
+        try{
+            new RestTemplate().postForLocation("http://localhost:8083/api/cart/{user_id}/addtocart",requestBody,uriVariables);
+        }catch (Exception ex){
+            throw ex;
+        }
+
     }
 
 

@@ -12,13 +12,11 @@ import java.util.Optional;
 public interface UserService {
     @Transactional
     User createUser(User user) throws DuplicateKeyException;
-
     User findUser(String id) throws UserNotFoundException;
-
     User findUserByEmail(String email) throws UserNotFoundException;
-
     @Transactional
     User addAddress(Address address,String email);
-
     List<User> findAll();
+    @Transactional
+    void addToCart(String productId,String userId,double price) throws Exception;
 }

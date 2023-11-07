@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ser.PropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.project.ecommerceuser.user.entity.Address;
+import com.project.ecommerceuser.user.entity.Product;
 import com.project.ecommerceuser.user.entity.User;
 import com.project.ecommerceuser.user.exception.UserNotFoundException;
 import com.project.ecommerceuser.user.repository.UserRepository;
@@ -19,11 +20,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @RestController()
 @RequestMapping("/api/users")
@@ -78,5 +81,14 @@ public class UserController {
         }
     }
 
+    @GetMapping("/products")
+    public ResponseEntity<?> getProduct(@RequestBody Map<String,String> request){
+        try {
+            userService.addToCart(request.get("productId"),request.get("userId"),Double.parseDouble(request.get("price")));
+            return new ResponseEntity<>("Success",HttpStatus.OK);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getLocalizedMessage());
+        }
+    }
 
 }
