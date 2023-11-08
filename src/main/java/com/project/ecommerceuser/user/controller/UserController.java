@@ -1,26 +1,19 @@
 package com.project.ecommerceuser.user.controller;
 
 import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.PropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.project.ecommerceuser.user.entity.Address;
-import com.project.ecommerceuser.user.entity.Product;
 import com.project.ecommerceuser.user.entity.User;
 import com.project.ecommerceuser.user.exception.UserNotFoundException;
-import com.project.ecommerceuser.user.repository.UserRepository;
 import com.project.ecommerceuser.user.service.UserService;
-import com.project.ecommerceuser.user.service.UserServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 

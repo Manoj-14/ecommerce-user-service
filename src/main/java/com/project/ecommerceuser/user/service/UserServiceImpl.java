@@ -1,5 +1,7 @@
 package com.project.ecommerceuser.user.service;
 
+import com.project.ecommerceuser.cart.cartService.CartProxy;
+import com.project.ecommerceuser.product.productService.ProductProxy;
 import com.project.ecommerceuser.user.entity.Address;
 import com.project.ecommerceuser.user.entity.User;
 import com.project.ecommerceuser.user.exception.UserNotFoundException;
@@ -17,16 +19,18 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private CartProxy cartProxy;
     @Autowired
     private AddressRepository addressRepository;
+    @Autowired
+    private ProductProxy productProxy;
 
     @Override
     public User createUser(User user) throws DuplicateKeyException {
@@ -92,26 +96,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addToCart(String productId, String userId, double price) throws Exception {
-        exitsByProductId(productId);
+        productProxy.existsByID(productId);
         if(!userRepository.existsById(userId)){
             throw new UserNotFoundException("User not found");
         }
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HashMap<String ,String> uriVariables = new HashMap<>();
-        uriVariables.put("user_id",userId);
-
         Map<String,String> request = new HashMap<>();
         request.put("product_id",productId);
         request.put("price",price+"");
-
-        HttpEntity<Map> requestBody = new HttpEntity<>(request,headers);
         try{
-            new RestTemplate().postForLocation("http://localhost:8083/api/cart/{user_id}/addtocart",requestBody,uriVariables);
+            cartProxy.addToCart(userId,request);
         }catch (Exception ex){
             throw ex;
         }
-
     }
 
 
