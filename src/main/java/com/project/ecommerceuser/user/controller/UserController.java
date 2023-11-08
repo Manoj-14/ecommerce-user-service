@@ -3,6 +3,7 @@ package com.project.ecommerceuser.user.controller;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.project.ecommerceuser.product.productService.ProductProxy;
 import com.project.ecommerceuser.user.entity.Address;
 import com.project.ecommerceuser.user.entity.User;
 import com.project.ecommerceuser.user.exception.UserNotFoundException;
@@ -27,6 +28,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ProductProxy productProxy;
 
     @GetMapping
     public ResponseEntity<?> getAllUsers(){
@@ -74,13 +78,23 @@ public class UserController {
         }
     }
 
-    @GetMapping("/products")
-    public ResponseEntity<?> getProduct(@RequestBody Map<String,String> request){
+    @PostMapping("/addToCart")
+    public ResponseEntity<?> addToCart(@RequestBody Map<String,String> request){
         try {
             userService.addToCart(request.get("productId"),request.get("userId"),Double.parseDouble(request.get("price")));
             return new ResponseEntity<>("Success",HttpStatus.OK);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getLocalizedMessage());
+        }
+    }
+
+    @GetMapping("/product/{id}")
+    public ResponseEntity<?> getProduct(@PathVariable String id){
+        try{
+            Map<String,String> product = productProxy.getProduct(id);
+            return new ResponseEntity<>(product,HttpStatus.OK);
+        }catch (Exception ex){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,ex.getLocalizedMessage());
         }
     }
 
