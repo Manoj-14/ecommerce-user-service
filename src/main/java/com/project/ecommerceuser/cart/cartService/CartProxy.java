@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Map;
 
-@FeignClient(name = "cart-service",url = "localhost:8083")
+@FeignClient(name = "cart-service",url = "${CART_SERVICE_URI:http://localhost}:8083")
 public interface CartProxy {
 
     @PostMapping("/api/cart/{user_id}/addtocart")
