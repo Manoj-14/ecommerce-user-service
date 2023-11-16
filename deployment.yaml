@@ -29,6 +29,14 @@ spec:
         - image: manojmdocker14/mmv2-ecommerce-user-service:0.0.5-SNAPSHOT
           imagePullPolicy: IfNotPresent
           name: mmv2-ecommerce-user-service
+          readinessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health/readiness
+          livenessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health/liveness
           envFrom:
             - configMapRef:
                 name: ecommerce-user-service
