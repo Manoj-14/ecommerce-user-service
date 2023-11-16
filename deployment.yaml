@@ -29,11 +29,14 @@ spec:
         - image: manojmdocker14/mmv2-ecommerce-user-service:0.0.5-SNAPSHOT
           imagePullPolicy: IfNotPresent
           name: mmv2-ecommerce-user-service
-          env:
-            - name: PRODUCT_SERVICE_URI
-              value: http://ecommerce-product-service
-            - name: CART_SERVICE_URI
-              value: http://ecommerce-cart-service
+          envFrom:
+            - configMapRef:
+                name: ecommerce-user-service
+          # env:
+          #   - name: PRODUCT_SERVICE_URI
+          #     value: http://ecommerce-product-service
+          #   - name: CART_SERVICE_URI
+          #     value: http://ecommerce-cart-service
           resources:
             limits:
               cpu: 500m
@@ -74,3 +77,13 @@ spec:
     app: ecommerce-user-service
   sessionAffinity: None
   type: LoadBalancer
+---
+#configmap
+apiVersion: v1
+data:
+  PRODUCT_SERVICE_URI: http://ecommerce-product-service
+  CART_SERVICE_URI: http://ecommerce-cart-service
+kind: ConfigMap
+metadata:
+  name: ecommerce-user-service
+  namespace: default
