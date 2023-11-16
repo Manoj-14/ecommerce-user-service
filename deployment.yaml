@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    autopilot.gke.io/resource-adjustment: '{"input":{"containers":[{"name":"mmv2-ecommerce-user-service"}]},"output":{"containers":[{"limits":{"cpu":"500m","ephemeral-storage":"1Gi","memory":"2Gi"},"requests":{"cpu":"500m","ephemeral-storage":"1Gi","memory":"2Gi"},"name":"mmv2-ecommerce-user-service"}]},"modified":true}'
+    autopilot.gke.io/warden-version: 2.7.41
+    deployment.kubernetes.io/revision: "1"
+  labels:
+    app: ecommerce-user-service
+  name: ecommerce-user-service
+  namespace: default
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1 #number of pods
+  selector:
+    matchLabels:
+      app: ecommerce-user-service
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate #How the pods need to be updated
+  template:
+    metadata:
+      labels:
+        app: ecommerce-user-service
+    spec:
+      containers:
+        - image: manojmdocker14/mmv2-ecommerce-user-service:0.0.5-SNAPSHOT
+          imagePullPolicy: IfNotPresent
+          name: mmv2-ecommerce-user-service
+          env:
+            - name: PRODUCT_SERVICE_URI
+              value: http://ecommerce-product-service
+            - name: CART_SERVICE_URI
+              value: http://ecommerce-cart-service
+          resources:
+            limits:
+              cpu: 500m
+              ephemeral-storage: 1Gi
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              ephemeral-storage: 1Gi
+              memory: 2Gi
+          securityContext:
+            capabilities:
+              drop:
+                - NET_RAW
+      restartPolicy: Always
+      tolerations:
+        - effect: NoSchedule
+          key: kubernetes.io/arch
+          operator: Equal
+          value: amd64
+---
+#Service configs
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    cloud.google.com/neg: '{"ingress":true}'
+  labels:
+    app: ecommerce-user-service
+  name: ecommerce-user-service
+  namespace: default
+spec:
+  allocateLoadBalancerNodePorts: true
+  ports:
+    - port: 8081
+      protocol: TCP
+      targetPort: 8081
+  selector:
+    app: ecommerce-user-service
+  sessionAffinity: None
+  type: LoadBalancer
