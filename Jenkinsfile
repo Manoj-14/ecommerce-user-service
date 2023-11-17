@@ -3,6 +3,8 @@ pipeline {
   environment {
     dockerimagename = "manojmdocker14/mmv2-ecommerce-user-service"
     dockerImage = ""
+    def dockerHome = tool 'myDocker'
+    PATH = "${dockerHome}/bin:${env.PATH}"
   }
 
   agent any
@@ -16,10 +18,6 @@ pipeline {
     }
 
     stage('Build image') {
-      environment{
-        def dockerHome = tool 'myDocker'
-        env.PATH = "${dockerHome}/bin:${env.PATH}"
-      }
       steps{
         script {
           dockerImage = docker.build dockerimagename
